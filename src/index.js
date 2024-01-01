@@ -56,18 +56,22 @@ client.on('ready', async () => {
 });
 
 client.on('messageCreate', async (message) => {
-    if (message.content.includes('Bump done!')) {
-        const db = await connectToDatabase();
-        const userId = message.author.id;
-        const timestamp = Date.now() + 5000;
+    // Check if the message author is a bot
+    if (message.author.bot) {
+        // Process the message only if it's from a bot
+        if (message.content.includes('Bump done!')) {
+            const db = await connectToDatabase();
+            const userId = message.author.id;
+            const timestamp = Date.now() + 7200000;
 
-        await saveTimerToMongoDB(db, userId, timestamp, message.channel.id);
+            await saveTimerToMongoDB(db, userId, timestamp, message.channel.id);
 
-        setTimeout(async () => {
-            message.reply('<@&1191185520382988388> the server is ready to be bumped!');
-            // Delete the timer from MongoDB when it expires
-            await deleteTimerFromMongoDB(db, userId);
-        }, timestamp - Date.now());
+            setTimeout(async () => {
+                message.reply('<@&1191185520382988388> the server is ready to be bumped!');
+                // Delete the timer from MongoDB when it expires
+                await deleteTimerFromMongoDB(db, userId);
+            }, timestamp - Date.now());
+        }
     }
 });
 
