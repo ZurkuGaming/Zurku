@@ -1,4 +1,4 @@
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField, ActivityType } = require('discord.js');
 const { MongoClient } = require('mongodb');
 require("dotenv/config");
 
@@ -49,16 +49,21 @@ const deleteTimerFromMongoDB = async (db, userId) => {
     console.log(`✅ Timer for user ${userId} deleted from MongoDB`);
 };
 
-client.on('ready', async () => {
+client.once('ready', async () => {
     console.log(`✅ ${client.user.tag} is online.`);
+    
+    // Set bot status to ":)"
+    client.user.setActivity({ 
+        name: ':)',
+        type: ActivityType.Custom
+     });
+
     const db = await connectToDatabase();
     await loadAndResumeTimers(db, client);
 });
 
 client.on('messageCreate', async (message) => {
-    // Check if the message author is a bot
     if (message.author.bot) {
-        // Process the message only if it's from a bot
         if (message.content.includes('Bump done!')) {
             const db = await connectToDatabase();
             const userId = message.author.id;
@@ -68,7 +73,6 @@ client.on('messageCreate', async (message) => {
 
             setTimeout(async () => {
                 message.reply('<@&1191185520382988388> the server is ready to be bumped!');
-                // Delete the timer from MongoDB when it expires
                 await deleteTimerFromMongoDB(db, userId);
             }, timestamp - Date.now());
         }
