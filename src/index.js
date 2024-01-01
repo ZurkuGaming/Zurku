@@ -62,6 +62,12 @@ client.on('messageCreate', async (message) => {
         const timestamp = Date.now() + 7200000;
 
         await saveTimerToMongoDB(db, userId, timestamp, message.channel.id);
+
+        setTimeout(async () => {
+            message.reply('<@&1191185520382988388> the server is ready to be bumped!');
+            // Delete the timer from MongoDB when it expires
+            await deleteTimerFromMongoDB(db, userId);
+        }, timestamp - Date.now());
     }
 });
 
