@@ -59,7 +59,7 @@ client.on('messageCreate', async (message) => {
     if (message.content.includes('Bump done!')) {
         const db = await connectToDatabase();
         const userId = message.author.id;
-        const timestamp = Date.now() + 7200000;
+        const timestamp = Date.now() + 5000;
 
         await saveTimerToMongoDB(db, userId, timestamp, message.channel.id);
 
