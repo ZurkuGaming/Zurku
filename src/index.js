@@ -4,14 +4,15 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-// Initialize Discord.js client
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    // Add any other intents your bot requires
-  ],
-});
+// Define the intents your bot will use
+const intents = [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  // Add any other intents your bot requires
+];
+
+// Initialize Discord.js client with intents
+const client = new Client({ intents });
 
 // Connect to MongoDB using mongoose
 mongoose.connect(process.env.MONGO_URI);
@@ -32,7 +33,6 @@ client.login(process.env.TOKEN);
 // Handle bot ready event
 client.once('ready', () => {
   console.log(`${client.user.tag} is online.`);
-  
   // Set your bot's custom status here
   client.user.setActivity({
     name: ':)', // Replace with your custom status text
