@@ -1,6 +1,9 @@
+require('dotenv/config');
+
 const { Client, IntentsBitField, ActivityType } = require('discord.js');
-const { MongoClient } = require('mongodb');
-require("dotenv/config");
+const { connectToDatabase, loadAndResumeTimers, saveTimerToMongoDB, deleteTimerFromMongoDB, updateUserInviteCount, updateUserMessageCount } = require('./database/connectToDatabase');
+const { sendWelcomeEmbed } = require('./welcome');
+const { sendGoodbyeEmbed } = require('./goodbye');
 
 const uri = process.env.MONGO_URI;
 const client = new Client({
@@ -9,74 +12,44 @@ const client = new Client({
         IntentsBitField.Flags.GuildMembers,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
+        IntentsBitField.Flags.GuildInvites,
     ]
 });
 
-const connectToDatabase = async () => {
-    const client = new MongoClient(uri);
-    await client.connect();
-    console.log('✅ Connected to MongoDB');
-    return client.db();
-};
-
-const saveTimerToMongoDB = async (db, userId, timestamp, channelId) => {
-    const timersCollection = db.collection('bump-timers');
-    await timersCollection.insertOne({ userId, timestamp, channelId });
-    console.log('✅ Timer saved to MongoDB');
-};
-
-const loadAndResumeTimers = async (db, client) => {
-    const timersCollection = db.collection('bump-timers');
-    const currentTimers = await timersCollection.find({ timestamp: { $gt: Date.now() } }).toArray();
-
-    currentTimers.forEach((timer) => {
-        const timeRemaining = timer.timestamp - Date.now();
-        setTimeout(async () => {
-            const channel = await client.channels.fetch(timer.channelId);
-            channel.send(`<@&1191185520382988388>, the server is ready to be bumped!`);
-            console.log(`Reminder sent to role <@&1191185520382988388>`);
-            // Delete the timer from MongoDB when it expires
-            await deleteTimerFromMongoDB(db, timer.userId);
-        }, timeRemaining);
-    });
-
-    console.log('✅ Timers loaded and resumed');
-};
-
-const deleteTimerFromMongoDB = async (db, userId) => {
-    const timersCollection = db.collection('bump-timers');
-    await timersCollection.deleteOne({ userId });
-    console.log(`✅ Timer for user ${userId} deleted from MongoDB`);
-};
-
-client.once('ready', async () => {
+client.on('guildCreate', require('./events/guildCreate'));
+client.on('guildMemberAdd', require('./events/guildMemberAdd'));
+client.on('interactionCreate', require('./events/interactionCreate'));
+client.on('messageCreate', require('./events/messageCreate'));
+client.on('ready', async () => {
     console.log(`✅ ${client.user.tag} is online.`);
-    
-    // Set bot status to ":)"
-    client.user.setActivity({ 
-        name: ':)',
-        type: ActivityType.Custom
-     });
 
-    const db = await connectToDatabase();
-    await loadAndResumeTimers(db, client);
-});
+    try {
+        await client.user.setActivity({
+            name: ':)',
+            type: ActivityType.Custom
+        });
+        console.log('✅ Activity set successfully');
 
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) {
-        if (message.content.includes('Bump done!')) {
-            const db = await connectToDatabase();
-            const userId = message.author.id;
-            const timestamp = Date.now() + 7200000;
+        const db = await connectToDatabase(uri);
 
-            await saveTimerToMongoDB(db, userId, timestamp, message.channel.id);
+        // Call loadAndResumeTimers after successfully connecting to the database
+        await loadAndResumeTimers(db, client);
 
-            setTimeout(async () => {
-                message.reply('<@&1191185520382988388> the server is ready to be bumped!');
-                await deleteTimerFromMongoDB(db, userId);
-            }, timestamp - Date.now());
+        // No need to load commands if not used
+        // const commands = loadCommands();
+
+        const application = await client.application?.fetch();
+        if (application) {
+            // No need to set commands if not used
+            // await application.commands.set(commands);
+            console.log('✅ Slash commands loaded globally');
+        } else {
+            console.error('❌ Unable to fetch the application.');
         }
+    } catch (error) {
+        console.error('❌ Error setting activity or loading commands:', error.message);
     }
 });
 
+console.log('URI:', uri);
 client.login(process.env.TOKEN);
