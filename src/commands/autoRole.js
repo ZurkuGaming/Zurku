@@ -1,38 +1,41 @@
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+// Import the GuildData model
 const GuildData = require('../models/guildData.js');
 
 module.exports = {
     data: {
         name: 'autorole',
-        description: 'Set a role to be automatically assigned to new members.',
+        description: 'Set the role to be automatically assigned to new members.',
+        category: 'Settings',
         options: [{
             name: 'role',
-            type: 8, 
+            type: 8, // Role type
             description: 'The role to assign to new members.',
             required: true,
         }],
     },
-    async execute(interaction = new CommandInteraction()) {
-        // Ensure the command was issued by an admin
+    async execute(interaction) {
+        // Check if the user has admin permissions
         if (!interaction.member.permissions.has('ADMINISTRATOR')) {
-            return interaction.reply('You must be an admin to use this command.');
+            return interaction.reply('You do not have permission to use this command.');
         }
 
-        const joinRole = interaction.options.getRole('role');
+        const role = interaction.options.get('role').role;
 
-        // Update the guild's join role ID
-        GuildData.findOneAndUpdate(
-            { guildID: interaction.guild.id },
-            { joinRoleID: joinRole.id },
-            { upsert: true, new: true, setDefaultsOnInsert: true },
-            (error) => {
-                if (error) {
-                    console.error(error);
-                    interaction.reply('There was an error setting the join role.');
-                } else {
-                    interaction.reply(`Successfully set the join role to ${joinRole.name}.`);
-                }
-            }
-        );
+        // Set the join role
+        const guildData = await GuildData.findOne({ guildID: interaction.guild.id });
+        if (!guildData) {
+            // If no data for the guild was found, create a new document
+            const newGuildData = new GuildData({
+                guildID: interaction.guild.id,
+                joinRoleID: role.id,
+            });
+            await newGuildData.save();
+        } else {
+            // If data for the guild was found, update the document
+            guildData.joinRoleID = role.id;
+            await guildData.save();
+        }
+
+        await interaction.reply({ content: `Join role set to ${role.name}`, ephemeral: true });
     },
 };
