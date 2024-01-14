@@ -6,7 +6,6 @@ const guildDataSchema = new mongoose.Schema({
     goodbyeChannelID: String,
     bumpChannelID: String,
     bumpRoleID: String,
-    joinRoleID: String,
 });
 
 module.exports = mongoose.model('GuildData', guildDataSchema);
