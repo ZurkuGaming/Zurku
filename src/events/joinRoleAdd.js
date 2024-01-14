@@ -1,20 +1,15 @@
-const GuildData = require('../models/guildData');
+// In joinRoleAdd.js
+const GuildData = require('../models/guildData.js');
 
 module.exports = {
     name: 'guildMemberAdd',
-    async execute(member) {
-        const guildData = await GuildData.findOne({ guildID: member.guild.id });
-        if (!guildData || !guildData.joinRoleID) {
-            console.log(`No join role set for guild ${member.guild.id}`);
-            return;
-        }
-
-        const role = member.guild.roles.cache.get(guildData.joinRoleID);
-        if (!role) {
-            console.log(`Role not found for ID ${guildData.joinRoleID}`);
-            return;
-        }
-
-        member.roles.add(role);
+    execute(member) {
+        GuildData.findOne({ guildID: member.guild.id }, (error, guildData) => {
+            if (error) console.error(error);
+            else if (guildData && guildData.joinRoleID) {
+                member.roles.add(guildData.joinRoleID)
+                    .catch(console.error);
+            }
+        });
     },
 };
