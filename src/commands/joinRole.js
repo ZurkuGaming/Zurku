@@ -9,7 +9,7 @@ module.exports = {
     options: [{
       name: 'role',
       description: 'The role to set as the join role',
-      type: 7,
+      type: 8,
       required: true
     }]
   },
