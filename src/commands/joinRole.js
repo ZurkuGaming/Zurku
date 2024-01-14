@@ -4,12 +4,12 @@ const GuildData = require('../models/guildData.js');
 module.exports = {
   data: {
     name: 'joinrole',
-    description: 'Set the join role',
+    description: 'Set the role to give new members when they join',
     category: 'Settings',
     options: [{
       name: 'role',
       description: 'The role to set as the join role',
-      type: 8,
+      type: 8, // Role type
       required: true
     }]
   },
@@ -20,21 +20,21 @@ module.exports = {
     }
     const role = interaction.options.get('role').role;
 
-    // Set the goodbye role
+    // Set the join role
     const guildData = await GuildData.findOne({ guildID: interaction.guild.id });
     if (!guildData) {
       // If no data for the guild was found, create a new document
       const newGuildData = new GuildData({
         guildID: interaction.guild.id,
-        roleJoinID: role.id
+        joinRoleID: role.id
       });
       await newGuildData.save();
     } else {
       // If data for the guild was found, update the document
-      guildData.roleJoinID = role.id;
+      guildData.joinRoleID = role.id;
       await guildData.save();
     }
 
     await interaction.reply({ content: `Join role set to ${role.name}`, ephemeral: true });
   }
-}
+};
