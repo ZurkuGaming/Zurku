@@ -20,6 +20,9 @@ module.exports = {
     }
     const role = interaction.options.get('role').role;
 
+    // Defer the reply
+    await interaction.deferReply({ ephemeral: true });
+
     // Set the join role
     const guildData = await GuildData.findOne({ guildID: interaction.guild.id });
     if (!guildData) {
@@ -35,6 +38,7 @@ module.exports = {
       await guildData.save();
     }
 
-    await interaction.reply({ content: `Join role set to ${role.name}`, ephemeral: true });
+    // Edit the deferred reply
+    await interaction.editReply({ content: `Join role set to ${role.name}`, ephemeral: true });
   }
 };
