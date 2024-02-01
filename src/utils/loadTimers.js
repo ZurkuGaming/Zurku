@@ -24,7 +24,7 @@ async function handleTimerEnd(client, timer) {
             const channel = guild.channels.cache.get(guildData.bumpChannelID);
             if (channel) {
                 // Include the role in the message
-                channel.send(`<@&${guildData.bumpRoleID}> Bump timer ended!`);
+                channel.send(`<@&${guildData.bumpRoleID}> the server is ready to bump!`);
             }
         }
     }
@@ -32,4 +32,4 @@ async function handleTimerEnd(client, timer) {
     await BumpTimer.deleteOne({ _id: timer._id });
 }
 
-module.exports = loadTimers;
+module.exports = { loadTimers, handleTimerEnd };

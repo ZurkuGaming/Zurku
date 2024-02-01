@@ -4,7 +4,7 @@ const GuildData = require('../models/guildData');
 
 module.exports = {
   name: 'guildMemberRemove',
-  execute: async (member, reason) => { // Add reason argument
+  execute: async (member, reason) => { 
     if (!member || !member.guild) {
       console.error('Member or member.guild is undefined');
       return;

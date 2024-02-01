@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = (commands, client) => {
   const helpEmbed = new EmbedBuilder()
     .setColor('#050505')
-    .setTitle('📚 Commands')
+    .setTitle('<:y_commands:1197795982671360020> Commands')
     .setDescription('Here are all the commands:')
     .setFooter({ text: 'Help command', iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
@@ -22,7 +22,7 @@ module.exports = (commands, client) => {
   for (const category in categories) {
     helpEmbed.addFields(
       { 
-        name: `🔹 ${category}`, 
+        name: `<:checkIcon:1198858728007536721> ${category}`, 
         value: categories[category].map(command => `**/${command.data.name}:** ${command.data.description}`).join('\n'), // Access name and description from data object
         inline: false 
       },

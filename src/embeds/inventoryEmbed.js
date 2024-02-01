@@ -9,7 +9,7 @@ function createInventoryEmbed(user, displayName, inventory, userData, username, 
     .setTimestamp();
 
   inventory.forEach(item => {
-    embed.addField(item.itemName, `Amount: ${item.amount}`, true);
+    embed.addFields({ name: item.itemName, value: `Amount: ${item.amount}`, inline: false });
   });
 
   return embed;

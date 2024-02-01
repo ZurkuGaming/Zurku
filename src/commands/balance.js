@@ -6,7 +6,7 @@ module.exports = {
     data: {
         name: 'balance',
         description: 'Show the user\'s balance',
-        category: 'Activities',
+        category: 'Economy',
     },
     execute: async (interaction, client) => {
         // Get the UserData document for this user

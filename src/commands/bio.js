@@ -5,7 +5,7 @@ module.exports = {
   data: {
     name: 'bio',
     description: 'Set your bio',
-    category: 'User',
+    category: 'User Profile',
     options: [
       {
         name: 'bio',

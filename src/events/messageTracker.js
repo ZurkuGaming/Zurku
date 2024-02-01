@@ -22,28 +22,7 @@ module.exports = {
     // Update the timestamp of the last message for this user
     lastMessageTimestamps.set(message.author.id, now);
 
-    // Get the UserData document for this user
-    let userData;
-    try {
-      userData = await UserData.findOne({ userID: message.author.id });
-      if (!userData) {
-        // If UserData doesn't exist, don't do anything
-        return;
-      }
-    } catch (error) {
-      console.error('Error finding user data: ', error);
-      return;
-    }
-
-    // Increment the message count
-    userData.messageCount += 1;
-
-    // Save the UserData document
-    try {
-      await userData.save();
-    } catch (error) {
-      console.error('Error saving user data: ', error);
-      return;
-    }
+    // Log the message content, username, channel name, and server name
+    console.log(`___\nServer: ${message.guild.name}\nChannel: ${message.channel.name}\nUser: ${message.author.username}\nMessage: ${message.content}\n___`);
   },
 };

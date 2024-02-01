@@ -8,18 +8,18 @@ function createProfileEmbed(userData, displayName, client, avatarURL) {
 
     const embed = new EmbedBuilder()
         .setColor('#050505')
-        .setTitle(`📝 ${displayName}'s Profile`)
+        .setTitle(`<:profileIcon:1198857853583237141> ${displayName}'s Global Profile`)
         .setThumbnail(avatarURL)
-        .setDescription(`📌 **About Me:** ${userData.bio || 'No bio set'}`)
+        .setDescription(`<:bioIcon:1198857852723409026> **About Me:** ${userData.bio || 'No bio set'}`)
         .addFields(
             { 
-                name: '✨ XP Progress', 
-                value: `${userData.xp}/${userData.xpRequired}\n${xpProgressBar}`,
+                name: '<:xpIcon:1198854751832506479> XP Progress', 
+                value: `${userData.xp.toFixed(1)}/${userData.xpRequired}\n${xpProgressBar}`,
                 inline: false 
             }, 
-            { name: '💪 Level', value: userData.level.toString(), inline: true },
-            { name: '📨 Messages', value: userData.messageCount.toString(), inline: true }, 
-            { name: '⭐ Reputation', value: userData.rep.toString(), inline: true },
+            { name: '<:levelsIcon:1198822606380482611> Level', value: userData.level.toString(), inline: true },
+            { name: '<:messageIcon:1198841543994376272> Messages', value: userData.messageCount.toString(), inline: true }, 
+            { name: '<:repIcon:1198843435218636830> Reputation', value: userData.rep.toString(), inline: true },
         )
         .setFooter({ text: 'Profile command', iconURL: client.user.displayAvatarURL() }) 
         .setTimestamp();

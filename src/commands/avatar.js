@@ -5,7 +5,7 @@ module.exports = {
     data: {
         name: 'avatar',
         description: 'Get the avatar URL of the selected user, or your own avatar.',
-        category: 'User',
+        category: 'User Profile',
         options: [
             {
                 name: 'user',

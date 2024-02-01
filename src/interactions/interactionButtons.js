@@ -20,13 +20,8 @@ module.exports = function handleButtonInteraction(client) {
                 newEmbed = await createMessageBoardEmbed(client, commandUser);
                 break;
             default:
-                console.log('Unexpected interaction.customId:', interaction.customId);
                 return;
         }
-
-        // Log the newEmbed object
-        console.log(newEmbed);
-
         try {
             await interaction.update({ embeds: [newEmbed] });
         } catch (error) {
