@@ -7,7 +7,6 @@ const webhookInteractionButtons = require('./src/interactions/webhookInteraction
 const handleInteractionCreate = require('./src/interactions/interactionCreate')
 const handleButtonInteraction = require('./src/interactions/interactionButtons');
 const handleProfileButtonInteraction = require('./src/interactions/profileButtons');
-const ChatSessionManager = require('./src/utils/chatSessionManager.js');
 db.connect()
 
 // Create a new Discord client
@@ -31,7 +30,6 @@ webhookInteractionButtons(client)
 handleInteractionCreate(client)
 handleButtonInteraction(client);
 handleProfileButtonInteraction(client);
-client.chatSessionManager = new ChatSessionManager();
 
 // Login to Discord with your app token
 client.login(process.env.TOKEN)
